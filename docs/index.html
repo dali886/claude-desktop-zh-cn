@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Claude 中文补丁 · 桌面版一键汉化</title>
+  <meta name="description" content="Claude 桌面版绿色中文补丁。Windows / macOS（含 M4 Mini）一键写入简体中文语言包，不覆盖其他语言。" />
+  <meta name="theme-color" content="#0B1220" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@500;700;900&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0b1220;
+      --ink-2: #121a2b;
+      --slate: #1a2436;
+      --line: rgba(247, 243, 235, 0.12);
+      --paper: #f7f3eb;
+      --paper-dim: #d9d2c5;
+      --seal: #c23b22;
+      --seal-deep: #9a2a16;
+      --jade: #3db8a6;
+      --mist: #8b9bb4;
+      --ok: #7dcea0;
+      --warn: #e8b86d;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      --radius: 18px;
+      --max: 1120px;
+      --font-display: "Noto Serif SC", "Songti SC", serif;
+      --font-body: "Source Sans 3", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--paper);
+      font-family: var(--font-body);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(194, 59, 34, 0.18), transparent 55%),
+        radial-gradient(900px 500px at 90% 0%, rgba(61, 184, 166, 0.12), transparent 50%),
+        linear-gradient(180deg, var(--ink) 0%, #0a101c 45%, #0d1524 100%);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    a { color: inherit; }
+    .wrap {
+      width: min(var(--max), calc(100% - 2rem));
+      margin: 0 auto;
+    }
+
+    /* grain */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      z-index: 0;
+    }
+
+    .site { position: relative; z-index: 1; }
+
+    /* nav */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 0;
+      gap: 1rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+    .seal {
+      width: 42px;
+      height: 42px;
+      border: 2px solid var(--seal);
+      color: var(--seal);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.35rem;
+      border-radius: 4px;
+      box-shadow: inset 0 0 0 1px rgba(194,59,34,0.35);
+      transform: rotate(-3deg);
+      background: rgba(194, 59, 34, 0.08);
+      letter-spacing: 0;
+    }
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+    .brand-text strong {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+    .brand-text span {
+      font-size: 0.78rem;
+      color: var(--mist);
+      font-family: var(--font-mono);
+      letter-spacing: 0.04em;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      font-size: 0.95rem;
+      color: var(--paper-dim);
+    }
+    .nav-links a { text-decoration: none; }
+    .nav-links a:hover { color: var(--paper); }
+    .nav-github {
+      border: 1px solid var(--line);
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      text-decoration: none;
+      color: var(--paper) !important;
+      background: rgba(255,255,255,0.03);
+    }
+    .nav-github:hover { border-color: rgba(247,243,235,0.28); }
+
+    /* hero */
+    .hero {
+      padding: 2.5rem 0 3.5rem;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--jade);
+      margin-bottom: 1rem;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 1.5rem;
+      height: 1px;
+      background: var(--jade);
+      opacity: 0.8;
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      line-height: 1.12;
+      margin: 0 0 1rem;
+      letter-spacing: 0.01em;
+    }
+    h1 em {
+      font-style: normal;
+      color: var(--seal);
+    }
+    .lead {
+      font-size: 1.12rem;
+      color: var(--paper-dim);
+      max-width: 36rem;
+      margin: 0 0 1.75rem;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.9rem 1.2rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.98rem;
+      border: 1px solid transparent;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:focus-visible {
+      outline: 2px solid var(--jade);
+      outline-offset: 3px;
+    }
+    .btn-primary {
+      background: var(--seal);
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(194, 59, 34, 0.28);
+    }
+    .btn-primary:hover { background: var(--seal-deep); }
+    .btn-secondary {
+      background: rgba(255,255,255,0.04);
+      border-color: var(--line);
+      color: var(--paper);
+    }
+    .btn-secondary:hover { border-color: rgba(247,243,235,0.28); }
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--line);
+      color: var(--paper-dim);
+    }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1rem;
+      color: var(--mist);
+      font-size: 0.9rem;
+    }
+    .meta-row span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--ok);
+      box-shadow: 0 0 0 4px rgba(125,206,160,0.12);
+    }
+
+    /* bilingual card */
+    .bridge {
+      position: relative;
+      background: linear-gradient(160deg, rgba(26,36,54,0.95), rgba(18,26,43,0.98));
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 4px);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .bridge::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% -40% auto;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(194,59,34,0.25), transparent 65%);
+      pointer-events: none;
+    }
+    .bridge-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--mist);
+      letter-spacing: 0.04em;
+    }
+    .lang-switch {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0.75rem;
+      align-items: stretch;
+      margin-bottom: 1.25rem;
+    }
+    .lang-pane {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1rem;
+      background: rgba(0,0,0,0.18);
+      min-height: 120px;
+    }
+    .lang-pane .tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--mist);
+      margin-bottom: 0.55rem;
+      letter-spacing: 0.06em;
+    }
+    .lang-pane .sample {
+      font-size: 1.05rem;
+      color: var(--paper-dim);
+    }
+    .lang-pane.zh .sample {
+      font-family: var(--font-display);
+      color: var(--paper);
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .arrow {
+      align-self: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(194,59,34,0.15);
+      border: 1px solid rgba(194,59,34,0.4);
+      color: var(--seal);
+      font-weight: 700;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.65rem;
+    }
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.8rem 0.7rem;
+      text-align: center;
+      background: rgba(255,255,255,0.02);
+    }
+    .stat b {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+    .stat span {
+      font-size: 0.78rem;
+      color: var(--mist);
+    }
+
+    /* sections */
+    section { padding: 1.5rem 0 3rem; }
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.4rem;
+    }
+    .section-head h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      font-weight: 700;
+    }
+    .section-head p {
+      margin: 0;
+      color: var(--mist);
+      max-width: 28rem;
+      font-size: 0.95rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .card {
+      background: rgba(18, 26, 43, 0.72);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+    }
+    .card h3 {
+      margin: 0 0 0.5rem;
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--paper-dim);
+      font-size: 0.95rem;
+    }
+    .card .icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 0.9rem;
+      background: rgba(61,184,166,0.1);
+      border: 1px solid rgba(61,184,166,0.25);
+      color: var(--jade);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+
+    /* downloads */
+    .dl-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1rem;
+    }
+    .dl-main, .dl-side {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(18, 26, 43, 0.8);
+      padding: 1.4rem;
+    }
+    .dl-main {
+      background:
+        linear-gradient(135deg, rgba(194,59,34,0.12), transparent 45%),
+        rgba(18, 26, 43, 0.9);
+    }
+    .platform {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      color: var(--seal);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+    .dl-main h3, .dl-side h3 {
+      margin: 0 0 0.4rem;
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+    }
+    .dl-main p, .dl-side p {
+      margin: 0 0 1rem;
+      color: var(--paper-dim);
+      font-size: 0.95rem;
+    }
+    .dl-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .dl-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      text-decoration: none;
+      background: rgba(0,0,0,0.18);
+      transition: border-color .15s ease, background .15s ease;
+    }
+    .dl-item:hover {
+      border-color: rgba(247,243,235,0.28);
+      background: rgba(255,255,255,0.03);
+    }
+    .dl-item strong { font-size: 0.95rem; }
+    .dl-item small {
+      display: block;
+      color: var(--mist);
+      font-size: 0.78rem;
+      margin-top: 0.1rem;
+    }
+    .chip {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--paper-dim);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.2rem 0.55rem;
+      white-space: nowrap;
+    }
+
+    /* steps */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.85rem;
+      counter-reset: step;
+    }
+    .step {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.15rem;
+      background: rgba(18,26,43,0.65);
+      counter-increment: step;
+    }
+    .step::before {
+      content: counter(step, decimal-leading-zero);
+      font-family: var(--font-mono);
+      color: var(--seal);
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      display: block;
+      margin-bottom: 0.7rem;
+    }
+    .step h3 {
+      margin: 0 0 0.4rem;
+      font-size: 1.05rem;
+      font-family: var(--font-display);
+    }
+    .step p {
+      margin: 0;
+      color: var(--paper-dim);
+      font-size: 0.92rem;
+    }
+
+    /* faq */
+    .faq {
+      display: grid;
+      gap: 0.7rem;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(18,26,43,0.65);
+      padding: 0.95rem 1.1rem;
+    }
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after {
+      content: "+";
+      color: var(--mist);
+      font-family: var(--font-mono);
+    }
+    details[open] summary::after { content: "–"; }
+    details p {
+      margin: 0.7rem 0 0;
+      color: var(--paper-dim);
+      font-size: 0.95rem;
+    }
+    details a { color: var(--jade); }
+
+    /* notice */
+    .notice {
+      margin-top: 1.5rem;
+      border: 1px solid rgba(232,184,109,0.28);
+      background: rgba(232,184,109,0.08);
+      color: #f0d7a8;
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+      font-size: 0.92rem;
+    }
+
+    /* footer */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 2rem 0 2.5rem;
+      color: var(--mist);
+      font-size: 0.9rem;
+    }
+    .footer-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: start;
+    }
+    footer a { color: var(--paper-dim); }
+    footer a:hover { color: var(--paper); }
+
+    @media (max-width: 900px) {
+      .hero, .dl-grid, .cards, .steps { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr 1fr 1fr; }
+      .nav-links a:not(.nav-github) { display: none; }
+      .section-head { flex-direction: column; align-items: start; }
+    }
+    @media (max-width: 560px) {
+      .lang-switch { grid-template-columns: 1fr; }
+      .arrow { transform: rotate(90deg); margin: 0.2rem auto; }
+      .stats { grid-template-columns: 1fr; }
+      h1 { font-size: 2.15rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .arrow { animation: none; }
+      .btn:hover { transform: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="site">
+    <div class="wrap">
+      <nav class="nav" aria-label="主导航">
+        <a class="brand" href="#top">
+          <div class="seal" aria-hidden="true">汉</div>
+          <div class="brand-text">
+            <strong>Claude 中文补丁</strong>
+            <span>desktop-zh-cn</span>
+          </div>
+        </a>
+        <div class="nav-links">
+          <a href="#download">下载</a>
+          <a href="#howto">用法</a>
+          <a href="#faq">说明</a>
+          <a class="nav-github" href="https://github.com/dali886/claude-desktop-zh-cn" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </nav>
+
+      <header class="hero" id="top">
+        <div>
+          <div class="eyebrow">Unofficial · Portable · zh-CN</div>
+          <h1>让 Claude 桌面版<br />说<em>中文</em></h1>
+          <p class="lead">
+            绿色单文件 / 一键脚本，自动写入简体中文语言包。
+            只新增 <strong>zh-CN</strong>，不覆盖英文、日文等其他语言。
+            支持 Windows 与 macOS（含 Apple Silicon M4）。
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://github.com/dali886/claude-desktop-zh-cn/releases/download/v1.0.0/ClaudeZhPatch-Windows.exe">
+              下载 Windows 版
+            </a>
+            <a class="btn btn-secondary" href="https://github.com/dali886/claude-desktop-zh-cn/releases/download/v1.0.0/ClaudeZhPatch-macOS.zip">
+              下载 macOS 版
+            </a>
+            <a class="btn btn-ghost" href="https://github.com/dali886/claude-desktop-zh-cn/releases/tag/v1.0.0" target="_blank" rel="noopener">
+              全部发行包
+            </a>
+          </div>
+          <div class="meta-row">
+            <span><i class="dot"></i> 最新版本 v1.0.0</span>
+            <span>免安装 · 管理员运行</span>
+            <span>翻译缓存约 1.9 万条</span>
+          </div>
+        </div>
+
+        <aside class="bridge" aria-label="效果示意">
+          <div class="bridge-top">
+            <span>LANGUAGE BRIDGE</span>
+            <span>v1.0.0</span>
+          </div>
+          <div class="lang-switch">
+            <div class="lang-pane">
+              <div class="tag">EN-US</div>
+              <div class="sample">Settings<br />Copy<br />New chat</div>
+            </div>
+            <div class="arrow" aria-hidden="true">→</div>
+            <div class="lang-pane zh">
+              <div class="tag">ZH-CN</div>
+              <div class="sample">设置<br />复制<br />新对话</div>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat"><b>1 键</b><span>打补丁</span></div>
+            <div class="stat"><b>2 端</b><span>Win / Mac</span></div>
+            <div class="stat"><b>0 覆盖</b><span>原语言保留</span></div>
+          </div>
+        </aside>
+      </header>
+
+      <section id="features">
+        <div class="section-head">
+          <h2>为什么用这个</h2>
+          <p>不是安装包，是补丁器：找到 Claude 安装目录，写好中文，退出重开即可。</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <div class="icon">01</div>
+            <h3>绿色免安装</h3>
+            <p>Windows 单文件 exe，Mac 解压即用。不往系统写启动项，不改注册表。</p>
+          </article>
+          <article class="card">
+            <div class="icon">02</div>
+            <h3>只加中文包</h3>
+            <p>新增 zh-CN 语言文件与白名单补丁，保留 en-US / ja-JP 等现有语言。</p>
+          </article>
+          <article class="card">
+            <div class="icon">03</div>
+            <h3>跨平台</h3>
+            <p>Windows 10/11 与 macOS（Intel / M1–M4）同一套翻译缓存，更新后可重跑。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="download">
+        <div class="section-head">
+          <h2>下载</h2>
+          <p>推荐直接从 GitHub Release 获取，文件校验以仓库发行页为准。</p>
+        </div>
+        <div class="dl-grid">
+          <div class="dl-main">
+            <div class="platform">Windows</div>
+            <h3>一键 GUI 补丁</h3>
+            <p>右键「以管理员身份运行」。会自动结束 Claude、修复写入权限并打上中文包。</p>
+            <div class="dl-list">
+              <a class="dl-item" href="https://github.com/dali886/claude-desktop-zh-cn/releases/download/v1.0.0/ClaudeZhPatch-Windows.exe">
+                <span>
+                  <strong>ClaudeZhPatch-Windows.exe</strong>
+                  <small>推荐 · 内置翻译缓存 · 约 1.9MB</small>
+                </span>
+                <span class="chip">EXE</span>
+              </a>
+              <a class="dl-item" href="https://github.com/dali886/claude-desktop-zh-cn/releases/download/v1.0.0/ClaudeZhPatch-Windows.zip">
+                <span>
+                  <strong>ClaudeZhPatch-Windows.zip</strong>
+                  <small>exe + 使用说明</small>
+                </span>
+                <span class="chip">ZIP</span>
+              </a>
+            </div>
+          </div>
+          <div class="dl-side">
+            <div class="platform" style="color: var(--jade)">macOS</div>
+            <h3>M4 Mini / Mac</h3>
+            <p>解压后双击 command 脚本。若语言包在 app.asar 内，需安装 Node.js LTS。</p>
+            <div class="dl-list">
+              <a class="dl-item" href="https://github.com/dali886/claude-desktop-zh-cn/releases/download/v1.0.0/ClaudeZhPatch-macOS.zip">
+                <span>
+                  <strong>ClaudeZhPatch-macOS.zip</strong>
+                  <small>脚本 + 翻译缓存 · 约 0.7MB</small>
+                </span>
+                <span class="chip">ZIP</span>
+              </a>
+              <a class="dl-item" href="https://github.com/dali886/claude-desktop-zh-cn/releases/download/v1.0.0/claude-desktop-zh-cn-full.zip">
+                <span>
+                  <strong>完整源码包</strong>
+                  <small>Windows / Mac / 共享资源</small>
+                </span>
+                <span class="chip">FULL</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="howto">
+        <div class="section-head">
+          <h2>怎么用</h2>
+          <p>核心就四步。Windows 必须管理员；Mac 如提示未识别开发者，在隐私设置里允许打开。</p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <h3>退出 Claude</h3>
+            <p>托盘/程序坞彻底退出，任务管理器里不要残留进程。</p>
+          </div>
+          <div class="step">
+            <h3>运行补丁</h3>
+            <p>Windows 右键管理员运行；Mac 双击「一键汉化-Mac.command」。</p>
+          </div>
+          <div class="step">
+            <h3>等待完成</h3>
+            <p>自动定位安装目录、写入 zh-CN、补丁语言白名单。</p>
+          </div>
+          <div class="step">
+            <h3>重新打开</h3>
+            <p>系统为简体中文时一般自动生效；否则到设置里选中文。</p>
+          </div>
+        </div>
+        <div class="notice">
+          Claude 更新后可能换新目录，界面变回英文是正常现象——再运行一次补丁即可。
+        </div>
+      </section>
+
+      <section id="faq">
+        <div class="section-head">
+          <h2>常见问题</h2>
+          <p>使用前请阅读：这是非官方社区工具。</p>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>提示没有权限写入怎么办？</summary>
+            <p>Windows：必须右键 exe → 以管理员身份运行，UAC 点「是」；并确认 Claude 已完全退出。可暂时关闭杀毒实时保护后再试。公司电脑若锁定 WindowsApps，需要管理员策略放行。</p>
+          </details>
+          <details>
+            <summary>会覆盖我原来的英文界面吗？</summary>
+            <p>不会。工具只新增 zh-CN 文件并补丁白名单，不改 en-US / ja-JP 等现有语言包。</p>
+          </details>
+          <details>
+            <summary>Mac 双击没反应 / 无法打开？</summary>
+            <p>系统设置 → 隐私与安全性 → 仍要打开。或在终端进入解压目录执行：
+              <br /><code style="font-family:var(--font-mono);color:var(--paper)">xattr -dr com.apple.quarantine . && chmod +x 一键汉化-Mac.command && ./一键汉化-Mac.command</code>
+            </p>
+          </details>
+          <details>
+            <summary>这是官方工具吗？安全吗？</summary>
+            <p>不是 Anthropic 官方产品。源码与发行包开源在
+              <a href="https://github.com/dali886/claude-desktop-zh-cn" target="_blank" rel="noopener">GitHub</a>。
+              修改客户端文件可能影响自动更新或完整性校验，请自行评估风险，并遵守服务条款与当地法律。</p>
+          </details>
+          <details>
+            <summary>源码和 Issue 在哪？</summary>
+            <p>仓库：
+              <a href="https://github.com/dali886/claude-desktop-zh-cn" target="_blank" rel="noopener">github.com/dali886/claude-desktop-zh-cn</a>
+              · 发行版：
+              <a href="https://github.com/dali886/claude-desktop-zh-cn/releases" target="_blank" rel="noopener">Releases</a>
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <footer>
+        <div class="footer-row">
+          <div>
+            <div class="brand" style="margin-bottom:0.6rem">
+              <div class="seal" style="width:32px;height:32px;font-size:1rem">汉</div>
+              <div class="brand-text">
+                <strong>Claude 中文补丁</strong>
+                <span>community localization</span>
+              </div>
+            </div>
+            <div>非官方项目 · MIT License · 与 Anthropic 无关</div>
+          </div>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap">
+            <a href="https://github.com/dali886/claude-desktop-zh-cn">仓库</a>
+            <a href="https://github.com/dali886/claude-desktop-zh-cn/releases/tag/v1.0.0">v1.0.0</a>
+            <a href="https://claude.ai/download" target="_blank" rel="noopener">获取 Claude 官方客户端</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>
