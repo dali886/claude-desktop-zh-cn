@@ -1,0 +1,11 @@
+/nologo
+/target:winexe
+/optimize+
+/platform:anycpu
+/win32manifest:app.manifest
+/r:System.Windows.Forms.dll
+/r:System.Drawing.dll
+/r:System.Web.Extensions.dll
+/resource:..\shared\translation-memory.json,translation-memory.json
+/out:ClaudeZhPatch.exe
+Program.cs

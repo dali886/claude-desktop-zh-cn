@@ -1,0 +1,24 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs / local state
+*.log
+install-state*.json
+.last-stats.json
+.asar-work-*/
+.write-*
+app.asar.new
+__pycache__/
+*.pyc
+
+# Build intermediates
+windows/*.pdb
+windows/Claude中文补丁*.exe
+windows/ClaudeZhPatch-v3*.exe
+
+# Editor
+.vscode/
+.idea/
+*.swp
